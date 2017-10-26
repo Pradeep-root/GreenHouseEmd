@@ -5,7 +5,7 @@
 dht DHT;
 
 #define DHT11_PIN 7
-#define fanPin 13
+#define fanPin 10
 #define lightPin 11
 #define pumpPin 12
 #define fliperPin 3
@@ -27,7 +27,7 @@ Servo servoMtr;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  Serial.setTimeout(500);
+  Serial.setTimeout(100);
   pinMode(fanPin, OUTPUT);
   pinMode(lightPin, OUTPUT);
   pinMode(pumpPin, OUTPUT);
@@ -108,7 +108,20 @@ void printSwitchStatus(){
     soilSensorOutPut = map(soilSensorOutPut,485,1023,100,0);
     Serial.print(soilSensorOutPut);
     Serial.println("%");
-    delay(1000);
+    delay(2000);
+}
+
+/**
+ * Humidity and temprature reading
+ * 
+ */
+void getDht11Data(){
+  int chk = DHT.read11(DHT11_PIN);
+  Serial.println("Humidity: " );
+  Serial.print(DHT.humidity, 1);
+  Serial.println("Temparature: ");
+  Serial.print(DHT.temperature, 1);
+  delay(2000); 
 }
 
 void loop() {
@@ -121,8 +134,9 @@ void loop() {
       fanOnOff(data.charAt(3));
       pumpOnOff(data.charAt(4));
       printSwitchStatus();
-    }   
+    } 
   }
+ // getDht11Data(); 
 
  // soilSensorData();
  
