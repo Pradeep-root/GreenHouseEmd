@@ -5,7 +5,7 @@
 dht DHT;
 
 #define DHT11_PIN 7
-#define fanPin 10
+#define fanPin 13
 #define lightPin 11
 #define pumpPin 12
 #define fliperPin 3
@@ -20,14 +20,18 @@ String fullData;
 int soilSensorPin = A0;
 int soilSensorOutPut;
 
-char data = 0;
+String data;
 
 Servo servoMtr;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  pinMode(13, OUTPUT);
+  Serial.setTimeout(500);
+  pinMode(fanPin, OUTPUT);
+  pinMode(lightPin, OUTPUT);
+  pinMode(pumpPin, OUTPUT);
+  pinMode(fliperPin, OUTPUT);
   servoMtr.attach(fliperPin);
 }
 
@@ -41,7 +45,58 @@ void fliperOpenClose(char data){
     }else if(data == '1'){
       servoMtr.write(90);
     }
-    Serial.println(servoMtr.read());
+   // Serial.println(servoMtr.read());
+}
+
+/**
+ * light on/off
+ */
+void lightOnOff(char data){
+  if(data == '0'){
+    digitalWrite(lightPin, LOW);
+  }else if(data == '1'){
+    digitalWrite(lightPin, HIGH);
+  }
+}
+
+/**
+ * fan on/off
+ */
+void fanOnOff(char data){
+  if(data == '0'){
+    digitalWrite(fanPin, LOW);
+  }else if(data == '1'){
+    digitalWrite(fanPin, HIGH);
+  }
+}
+
+/**
+ * pump on/off
+ */
+ void pumpOnOff(char data){
+  if(data == '0'){
+    digitalWrite(pumpPin, LOW);
+  }else if(data == '1'){
+    digitalWrite(pumpPin, HIGH);
+  }
+}
+
+/** 
+ * Printing the switches pin status 
+ */
+void printSwitchStatus(){
+    fanStatus = digitalRead(fanPin);
+    lightStatus = digitalRead(lightPin);
+    pumpStatus = digitalRead(pumpPin);
+    if(servoMtr.read()== 0){
+      fliperStatus = '0';
+    }else{
+      fliperStatus = '1';
+    }
+    
+    Serial.println("s"+fliperStatus+lightStatus+fanStatus+pumpStatus+"e");
+    delay(2000);
+  
 }
 
 /**
@@ -56,30 +111,19 @@ void fliperOpenClose(char data){
     delay(1000);
 }
 
-/** 
- * Printing the switches pin status 
- */
-void printSwitchStatus(){
-    fanStatus = digitalRead(fanPin);
-    lightStatus = digitalRead(lightPin);
-    pumpStatus = digitalRead(pumpPin);
-    fliperStatus = digitalRead(fliperPin);
-
-    Serial.println("a"+fanStatus+lightStatus+pumpStatus+fliperStatus+"e");
-    delay(2000);
-  
-}
-
 void loop() {
   // put your main code here, to run repeatedly:
   if(Serial.available() > 0){
-    data = Serial.read();
-    fliperOpenClose(data);
+    data = Serial.readString();
+    if(data.charAt(0) == 'w' || data.charAt(0) == '*'){
+      fliperOpenClose(data.charAt(1));
+      lightOnOff(data.charAt(2));
+      fanOnOff(data.charAt(3));
+      pumpOnOff(data.charAt(4));
+      printSwitchStatus();
+    }   
   }
 
-  soilSensorData();
-
- //  printSwitchStatus(); 
-
+ // soilSensorData();
  
 }
