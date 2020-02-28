@@ -5,4 +5,4 @@ This project required some hardware like.
 * Blutooth module HC-05 
 * Relay controllers
 * Humidity sensor
-* Temperatur sensor
+* Temperature sensor
