@@ -1,7 +1,6 @@
-# GreenHouseEmd
+Welcome to the GreenHouseEmd wiki!
 
-This is an Arduino code to control and monitor a green house system.
-*Temperature sensor
-*Humidity sensor
-*Relay controls
-*Soil moisture sensor
+This project required some hardware like.
+* Arduino 
+* Blutooth module HC-05 
+* Relay controllers
